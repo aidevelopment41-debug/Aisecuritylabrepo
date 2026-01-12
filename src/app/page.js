@@ -35,12 +35,10 @@ const features = [
 import { NeonButton } from "@/components/neon-button"
 
 export default function Home() {
-const containerRef = useRef<HTMLElement | null>(null);
+const containerRef = useRef(null);
 const [mounted, setMounted] = useState(false);
 
-useEffect(() => {
-  setMounted(true);
-}, []);
+
 
 const { scrollYProgress } = useScroll(
   mounted
@@ -58,8 +56,10 @@ const scaleY = useSpring(scrollYProgress ?? 0, {
 });
 
   return (
-    <div  className="flex flex-col min-h-screen bg-[#000000] text-white pt-[80px] md:pt-[100px] relative overflow-hidden">
-      <div className="fixed left-6 top-1/2 -translate-y-1/2 h-64 w-[1px] bg-zinc-800 hidden lg:block">
+<div
+  ref={containerRef}
+  className="flex flex-col min-h-screen bg-[#000000] text-white pt-[80px] md:pt-[100px] relative overflow-hidden"
+>      <div className="fixed left-6 top-1/2 -translate-y-1/2 h-64 w-[1px] bg-zinc-800 hidden lg:block">
           <motion.div 
             style={{ scaleY, originY: 0 }}
             className="w-full h-full bg-orange-500 shadow-[0_0_15px_#f97316]"
@@ -156,12 +156,7 @@ const scaleY = useSpring(scrollYProgress ?? 0, {
             </div>
           </div>
           <div className="relative aspect-square rounded-2xl border border-white/10 bg-white/5 overflow-hidden group shadow-[0_0_50px_rgba(249,115,22,0.1)]">
-            <Image
-              src="/brain/89b74612-74fa-40a1-8bd9-ca4c04c47d71/ai_security_mission_visual_1767567359490.png"
-              alt="AI Security Mission Visual"
-              fill
-              className="object-cover opacity-60 group-hover:opacity-80 transition-opacity group-hover:scale-105 duration-700"
-            />
+            
             <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60"></div>
           </div>
         </div>
