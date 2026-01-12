@@ -3,12 +3,25 @@
 import Link from "next/link"
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { ShieldAlert, ChevronDown, ArrowRight, Menu, X } from "lucide-react"
+import { ChevronDown, ArrowRight, Menu, X, ShieldCheck, Lock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
-const announcements = [
-  { text: "New Research: Prompt Injection in RAG Systems - 2026 Report", href: "/research" },
+const NAV_LINKS = [
+  { 
+    label: "Research & Projects", 
+    href: "/research",
+    hasDropdown: true,
+    badge: "New" 
+  },
+  { label: "Services & Solutions", href: "/services" },
+  { label: "Insights", href: "/insights" },
+  { label: "Resources", href: "/resources" },
+  { label: "About Us", href: "/about" },
+]
+
+const ANNOUNCEMENTS = [
+  { text: "New Research: Prompt Injection in RAG Systems - 2026 Report", href: "/research/rag-security" },
   { text: "Webinar: Securing Agentic Workflows - Register Now", href: "/webinar" },
   { text: "Platform Update: Enhanced Context Filtering Live", href: "/updates" },
 ]
@@ -16,140 +29,144 @@ const announcements = [
 export function Navbar() {
   const [index, setIndex] = useState(0)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-
   const [isScrolled, setIsScrolled] = useState(false)
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20)
-    }
+    const handleScroll = () => setIsScrolled(window.scrollY > 20)
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setIndex((prev) => (prev + 1) % announcements.length)
-    }, 5000)
+      setIndex((prev) => (prev + 1) % ANNOUNCEMENTS.length)
+    }, 6000)
     return () => clearInterval(timer)
   }, [])
 
   return (
-    <div className="fixed top-0 w-full z-50">
-      {/* Rotating Announcement Strip */}
-      <div className="bg-primary text-primary-foreground text-[10px] md:text-xs py-2 px-4 text-center font-medium relative z-50 overflow-hidden h-9 flex items-center justify-center">
+    <header className="fixed top-0 w-full z-50">
+      <div className="bg-zinc-950 border-b border-white/5 text-primary-foreground text-[10px] md:text-xs py-2 px-4 text-center font-medium relative z-50 overflow-hidden h-9 flex items-center justify-center">
         <AnimatePresence mode="wait">
           <motion.div
             key={index}
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3 }}
+            exit={{ opacity: 0, y: -15 }}
+            transition={{ duration: 0.4, ease: "circOut" }}
             className="flex items-center gap-2 absolute w-full justify-center"
           >
-            <span className="font-bold uppercase tracking-wider opacity-80 lg:inline hidden">Latest Update:</span>
-            <span className="truncate max-w-[200px] md:max-w-none">{announcements[index].text}</span>
-            <Link href={announcements[index].href} className="underline underline-offset-2 hover:opacity-80 flex items-center cursor-pointer ml-1 shrink-0">
-              Read <ArrowRight className="h-3 w-3 ml-0.5" />
+            <span className="text-orange-500 font-bold uppercase tracking-widest text-[9px] lg:inline hidden">
+              Security Alert:
+            </span>
+            <span className="text-zinc-300 truncate max-w-[200px] md:max-w-none">
+              {ANNOUNCEMENTS[index].text}
+            </span>
+            <Link 
+              href={ANNOUNCEMENTS[index].href} 
+              className="text-white underline underline-offset-4 hover:text-orange-400 transition-colors flex items-center ml-2 shrink-0"
+            >
+              Analyze <ArrowRight className="h-3 w-3 ml-1" />
             </Link>
           </motion.div>
         </AnimatePresence>
       </div>
 
-      <nav className={cn(
-        "bg-background/80 backdrop-blur-md relative z-40 transition-all duration-500",
-        isScrolled ? "border-b border-orange-500/30 shadow-[0_4px_30px_rgba(249,115,22,0.1)] py-0" : "border-b border-white/5 py-2"
-      )}>
-        <div className="container flex h-20 max-w-screen-2xl items-center justify-between px-4 md:px-8">
-
-          <Link href="/" className="flex items-center gap-2 md:gap-3 mr-4 md:mr-8 shrink-0 hover:opacity-80 transition-opacity">
-            <ShieldAlert className="h-6 w-6 md:h-8 md:h-8 text-orange-500" />
-            <span className="font-bold text-base md:text-xl tracking-tight leading-none text-white">
-              AI SECURITY <br />
-              <span className="text-muted-foreground font-normal text-[10px] md:text-xs tracking-widest uppercase">LAB</span>
+      <nav 
+        className={cn(
+          "relative w-full z-40 transition-all duration-500 transition-bezier",
+          isScrolled 
+            ? "bg-zinc-950/80 backdrop-blur-xl border-b border-orange-500/20 py-1 shadow-2xl" 
+            : "bg-transparent py-4"
+        )}
+      >
+        <div className="flex h-16  items-center justify-between px-14">
+          
+          <Link href="/" className="flex items-center gap-3 shrink-0 group">
+            <div className="relative">
+              <img src="logoAIS2.svg"className="h-8 w-8 text-orange-500 transition-transform group-hover:scale-110" />
+              <div className="absolute inset-0 bg-orange-500/20 blur-xl rounded-full group-hover:bg-orange-500/40 transition-all" />
+            </div>
+            <span className="font-bold text-lg md:text-xl tracking-tighter leading-tight text-zinc-100">
+              AI SECURITY<span className="text-orange-500">.</span>
+              <span className="block text-zinc-500 font-mono text-[9px] tracking-[0.3em] uppercase">Laboratory</span>
             </span>
           </Link>
 
-          {/* AI Lab Nav */}
-          <div className="hidden lg:flex items-center gap-8 flex-1 justify-center">
-            <Link href="/research" className="text-sm font-medium hover:text-primary transition-colors flex items-center group">
-              Research & Projects <ChevronDown className="h-4 w-4 ml-1 opacity-50 group-hover:rotate-180 transition-transform duration-300" />
-            </Link>
-            <Link href="/services" className="text-sm font-medium hover:text-primary transition-colors">
-              Services & Solutions
-            </Link>
-            <Link href="/insights" className="text-sm font-medium hover:text-primary transition-colors">
-              Insights & Blog
-            </Link>
-            <Link href="/resources" className="text-sm font-medium hover:text-primary transition-colors">
-              Resources
-            </Link>
-            <Link href="/about" className="text-sm font-medium hover:text-primary transition-colors">
-              About Us
-            </Link>
-          </div>
+          <div className="hidden lg:flex items-center gap-1 flex-1 justify-center">
+            {NAV_LINKS.map((link) => (
+              <Link 
+                key={link.href}
+                href={link.href} 
+                className="px-4 py-2 text-sm font-medium text-zinc-400 hover:text-white transition-all flex items-center group relative"
+              >
+                {link.label}
+                {link.hasDropdown && (
+                  <ChevronDown className="h-3 w-3 ml-1 opacity-40 group-hover:rotate-180 transition-transform" />
+                )}
 
-          {/* Right Actions */}
-          <div className="flex items-center gap-2 md:gap-4 shrink-0">
-            <Link href="/login" className="text-sm font-medium text-muted-foreground hover:text-foreground hidden sm:block transition-colors">
-              Log In
+              </Link>
+            ))}
+          </div>
+          <div className="flex items-center gap-4">
+            <Link 
+              href="/login" 
+              className="text-xs font-semibold text-zinc-400 hover:text-white hidden sm:flex items-center gap-2 transition-colors"
+            >
+              Login
             </Link>
-            <Link href="/demo" className="hidden sm:block">
-              <Button className="font-semibold shadow-[0_0_15px_rgba(249,115,22,0.4)] hover:shadow-[0_0_25px_rgba(249,115,22,0.6)] transition-all bg-orange-500 hover:bg-orange-600 text-white">
-                Get a Demo
+            
+            <Link href="/demo">
+              <Button size="sm" className="hidden sm:flex bg-orange-600 hover:bg-orange-500 text-white border-none shadow-lg shadow-orange-900/20">
+               Get a Demo
               </Button>
             </Link>
 
-            {/* Mobile Menu Toggle */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="lg:hidden p-2 text-white hover:bg-white/5 rounded-lg transition-colors"
+              aria-label="Toggle menu"
+              className="lg:hidden p-2 text-zinc-100 hover:bg-white/5 rounded-full transition-colors"
             >
               {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
           </div>
-
         </div>
 
-        {/* Mobile Menu Overlay */}
         <AnimatePresence>
           {isMenuOpen && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
+              animate={{ opacity: 1, height: "100vh" }}
               exit={{ opacity: 0, height: 0 }}
-              className="lg:hidden border-t border-white/5 bg-background/95 backdrop-blur-xl overflow-hidden"
+              className="lg:hidden bg-zinc-950 border-t border-white/5 overflow-hidden"
             >
-              <div className="container px-4 py-8 flex flex-col gap-6">
-                {[
-                  { label: "Research & Projects", href: "/research" },
-                  { label: "Services & Solutions", href: "/services" },
-                  { label: "Insights & Blog", href: "/insights" },
-                  { label: "Resources", href: "/resources" },
-                  { label: "About Us", href: "/about" },
-                ].map((item) => (
-                  <Link
+              <div className="container px-8 py-12 flex flex-col gap-8">
+                {NAV_LINKS.map((item, i) => (
+                  <motion.div
                     key={item.label}
-                    href={item.href}
-                    onClick={() => setIsMenuOpen(false)}
-                    className="text-2xl font-bold font-orbitron hover:text-primary transition-colors"
+                    initial={{ x: -20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: i * 0.1 }}
                   >
-                    {item.label}
-                  </Link>
+                    <Link
+                      href={item.href}
+                      onClick={() => setIsMenuOpen(false)}
+                      className="text-3xl font-bold text-zinc-100 hover:text-orange-500 transition-colors"
+                    >
+                      {item.label}
+                    </Link>
+                  </motion.div>
                 ))}
-                <div className="pt-6 border-t border-white/5 flex flex-col gap-4">
-                  <Link href="/login" onClick={() => setIsMenuOpen(false)}>
-                    <Button variant="ghost" className="w-full justify-start text-lg">Log In</Button>
-                  </Link>
-                  <Link href="/demo" onClick={() => setIsMenuOpen(false)}>
-                    <Button className="w-full text-lg py-6 bg-orange-500 hover:bg-orange-600 text-white shadow-[0_0_20px_rgba(249,115,22,0.2)]">Get a Demo</Button>
-                  </Link>
+                
+                <div className="pt-8 border-t border-white/5 space-y-4">
+                  <Button variant="outline" className="w-full text-zinc-300 border-zinc-800">Client Portal</Button>
+                  <Button className="w-full bg-orange-600">Request Audit</Button>
                 </div>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
       </nav>
-    </div>
+    </header>
   )
 }

@@ -24,14 +24,16 @@ export function LiveDefenseConsole() {
     }, [])
 
     return (
-        <div className="w-full max-w-sm rounded-xl bg-black/40 backdrop-blur-md border border-white/10 overflow-hidden font-mono text-xs">
-
+        <div className=" relative w-full max-w-sm rounded-sm bg-black/40 backdrop-blur-md border border-white/10 overflow-hidden font-mono text-xs">
+              <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-orange-500/30" />
+              <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-orange-500/30" />
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-2 bg-white/5 border-b border-white/10">
                 <div className="flex items-center gap-2">
-                    <div className="h-2 w-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)] animate-pulse"></div>
-                    <span className="text-white/70 uppercase tracking-widest text-[9px] font-bold">System Active</span>
+                <div className="w-1 h-1 bg-orange-500 animate-pulse" />
+                <div className="w-8 h-[1px] bg-orange-500/30" />                    <span className="text-orange-500 uppercase tracking-widest text-[9px] font-bold">System Active</span>
                 </div>
+             
                 <div className="text-[10px] text-muted-foreground">v2.4.0</div>
             </div>
 

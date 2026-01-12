@@ -1,13 +1,15 @@
 "use client"
 
 import Link from "next/link"
-import { motion } from "framer-motion"
+import React,{useRef,useState,useEffect} from "react";
 import { ArrowRight, ShieldCheck, Activity, Lock, Eye, Shield, Zap } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { motion, useScroll, useSpring } from "framer-motion";
 import Image from "next/image"
-import { HeroBackground } from "@/components/hero-background"
+import HeroBackground from "@/components/hero-background"
 import { LiveDefenseConsole } from "@/components/live-console"
-
+import SecurityFeatures from "@/components/feature"
+import ServicesSection from "@/components/securityes"
+import InnovationLab from "@/components/projects";
 const container = {
   hidden: { opacity: 0 },
   show: {
@@ -33,9 +35,36 @@ const features = [
 import { NeonButton } from "@/components/neon-button"
 
 export default function Home() {
-  return (
-    <div className="flex flex-col min-h-screen bg-[#020202] text-white pt-[80px] md:pt-[100px] relative overflow-hidden">
+const containerRef = useRef<HTMLElement | null>(null);
+const [mounted, setMounted] = useState(false);
 
+useEffect(() => {
+  setMounted(true);
+}, []);
+
+const { scrollYProgress } = useScroll(
+  mounted
+    ? {
+        target: containerRef,
+        offset: ["start start", "end end"],
+      }
+    : {}
+);
+
+const scaleY = useSpring(scrollYProgress ?? 0, {
+  stiffness: 100,
+  damping: 30,
+  restDelta: 0.001,
+});
+
+  return (
+    <div  className="flex flex-col min-h-screen bg-[#000000] text-white pt-[80px] md:pt-[100px] relative overflow-hidden">
+      <div className="fixed left-6 top-1/2 -translate-y-1/2 h-64 w-[1px] bg-zinc-800 hidden lg:block">
+          <motion.div 
+            style={{ scaleY, originY: 0 }}
+            className="w-full h-full bg-orange-500 shadow-[0_0_15px_#f97316]"
+          />
+        </div>
       {/* Backgrounds */}
       <HeroBackground />
       {/* Animated noise overlay */}
@@ -96,113 +125,13 @@ export default function Home() {
       </section>
 
       {/* Feature Strip */}
-      <section className="relative z-10 container px-4 md:px-8 mx-auto max-w-screen-2xl mt-12 mb-20">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {features.map((f, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 + 0.5 }}
-              viewport={{ once: true }}
-              whileHover={{ scale: 1.05, borderColor: "rgba(249, 115, 22, 0.3)" }}
-              className="flex items-center gap-4 p-5 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-all group cursor-default hover:shadow-[0_0_20px_rgba(249,115,22,0.05)]"
-            >
-              <div className="h-10 w-10 rounded-lg bg-orange-500/5 border border-orange-500/10 flex items-center justify-center text-orange-500 group-hover:text-orange-400 group-hover:bg-orange-500/10 transition-all">
-                <f.icon className="h-5 w-5" />
-              </div>
-              <div>
-                <div className="font-bold font-orbitron text-sm tracking-tight">{f.title}</div>
-                <div className="text-[10px] text-muted-foreground font-exo uppercase tracking-widest mt-0.5 opacity-70">{f.desc}</div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </section>
+      <SecurityFeatures/>
 
       {/* Services/Solutions Section */}
-      <section className="relative z-10 container px-4 md:px-8 mx-auto max-w-screen-2xl mb-32">
-        <div className="flex flex-col md:flex-row items-start md:items-end justify-between mb-12 gap-6">
-          <div>
-            <div className="text-orange-500 font-mono text-xs tracking-widest mb-2 uppercase font-bold">Core Expertise</div>
-            <h2 className="text-3xl md:text-5xl font-bold font-orbitron">Services & Solutions</h2>
-          </div>
-          <Link href="/services">
-            <Button variant="outline" className="border-white/10 bg-white/5 hover:bg-orange-500/10 hover:border-orange-500/50 hover:text-orange-400 transition-all shrink-0">
-              Learn How AI Helps <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[
-            { icon: Shield, title: "Automated Threat Detection", desc: "AI-driven identification of adversarial patterns and anomalies." },
-            { icon: Zap, title: "Predictive Defense", desc: "Leveraging neural intelligence to anticipate and neutralize future threats." },
-            { icon: Lock, title: "Model Hardening", desc: "Rigorous security assurance for large-scale AI infrastructure." }
-          ].map((s, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
-              viewport={{ once: true }}
-              className="group p-8 rounded-2xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-all hover:border-orange-500/30"
-            >
-              <div className="h-12 w-12 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center mb-6 text-white group-hover:text-orange-400 group-hover:scale-110 transition-all">
-                <s.icon className="h-6 w-6" />
-              </div>
-              <h3 className="text-xl font-bold mb-3 font-orbitron">{s.title}</h3>
-              <p className="text-muted-foreground mb-6 font-exo text-sm leading-relaxed">{s.desc}</p>
-              <div className="pt-2">
-                <NeonButton variant="orange" size="sm" className="w-full justify-between opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0">
-                  View Solution <ArrowRight className="h-4 w-4" />
-                </NeonButton>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </section>
+      <ServicesSection/>
 
       {/* Research & Projects Section */}
-      <section className="relative z-10 container px-4 md:px-8 mx-auto max-w-screen-2xl mb-32">
-        <div className="mb-12">
-          <div className="text-orange-500 font-mono text-xs tracking-widest mb-2 uppercase">Innovation Lab</div>
-          <h2 className="text-3xl md:text-5xl font-bold font-orbitron">Research & Projects</h2>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {[
-            { title: "IoT Security Lab", subtitle: "Edge Intelligence Defense", tags: ["IoT", "Security"], color: "from-blue-500 to-indigo-500" },
-            { title: "Biometric AI", subtitle: "Secure Identity Verification", tags: ["Biometrics", "AI"], color: "from-green-500 to-teal-500" },
-            { title: "Threat Detection", subtitle: "Adversarial Pattern Recognition", tags: ["Research", "Safety"], color: "from-orange-500 to-red-500" }
-          ].map((p, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className="group relative overflow-hidden rounded-2xl border border-white/10 bg-black min-h-[280px] flex flex-col justify-end p-8"
-            >
-              <div className={`absolute inset-0 bg-gradient-to-br ${p.color} opacity-10 group-hover:opacity-20 transition-opacity`}></div>
-              <div className="relative z-10">
-                <div className="flex gap-2 mb-3">
-                  {p.tags.map(t => (
-                    <span key={t} className="px-2 py-1 rounded text-[10px] font-mono bg-white/10 border border-white/10 uppercase tracking-wider">{t}</span>
-                  ))}
-                </div>
-                <h3 className="text-2xl font-bold font-orbitron mb-1 text-white">{p.title}</h3>
-                <p className="text-white/70 font-exo mb-6 text-sm leading-relaxed">{p.subtitle}</p>
-                <div className="pt-2">
-                  <NeonButton variant="outline" size="sm" className="w-full justify-between group-hover:border-white/40 transition-all bg-black/50">
-                    Explore Research <ArrowRight className="h-4 w-4" />
-                  </NeonButton>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </section>
+      <InnovationLab/>
 
       {/* About Us Section */}
       <section className="relative z-10 container px-4 md:px-8 mx-auto max-w-screen-2xl mb-32">
