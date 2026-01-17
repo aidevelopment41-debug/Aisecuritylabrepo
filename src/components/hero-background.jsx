@@ -174,7 +174,7 @@ export default function SecurityBackground() {
       }
       packets = packets.filter(p => {
         p.update();
-        p.draw();
+        // p.draw(); // Removed to eliminate the moving dots
         return !p.dead;
       });
 
