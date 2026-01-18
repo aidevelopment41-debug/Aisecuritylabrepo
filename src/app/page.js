@@ -38,6 +38,10 @@ export default function Home() {
 const containerRef = useRef(null);
 const [mounted, setMounted] = useState(false);
 
+useEffect(() => {
+  setMounted(true);
+}, []);
+
 
 
 const { scrollYProgress } = useScroll(

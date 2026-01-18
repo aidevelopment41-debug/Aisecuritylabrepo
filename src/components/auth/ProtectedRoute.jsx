@@ -1,14 +1,26 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 export const ProtectedRoute = ({ 
   children, 
   requireAdmin = false 
 }) => {
   const { user, loading, isAuthenticated } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (loading) return;
+    if (!isAuthenticated) {
+      router.replace('/login');
+      return;
+    }
+    if (requireAdmin && !user?.is_superuser) {
+      router.replace('/dashboard');
+    }
+  }, [loading, isAuthenticated, requireAdmin, user, router]);
 
   if (loading) {
     return (
@@ -23,12 +35,8 @@ export const ProtectedRoute = ({
     );
   }
 
-  if (!isAuthenticated) {
-    redirect('/login');
-  }
-
-  if (requireAdmin && !user?.is_superuser) {
-    redirect('/dashboard');
+  if (!isAuthenticated || (requireAdmin && !user?.is_superuser)) {
+    return null;
   }
 
   return <>{children}</>;
