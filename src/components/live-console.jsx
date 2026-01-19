@@ -24,9 +24,9 @@ export function LiveDefenseConsole() {
     }, [])
 
     return (
-        <div className=" relative w-full max-w-sm rounded-sm bg-black/40 backdrop-blur-md border border-white/10 overflow-hidden font-mono text-xs">
-              <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-orange-500/30" />
-              <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-orange-500/30" />
+        <div className=" relative w-full max-w-sm rounded-sm bg-black/35 backdrop-blur-md border border-white/5 overflow-hidden font-mono text-xs">
+              <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-orange-500/20" />
+              <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-orange-500/20" />
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-2 bg-white/5 border-b border-white/10">
                 <div className="flex items-center gap-2">
@@ -43,11 +43,14 @@ export function LiveDefenseConsole() {
                 <div className="flex items-center gap-4">
                     <div className="relative h-16 w-16 rounded-full border-2 border-orange-500/20 flex items-center justify-center">
                         <div className="absolute inset-0 rounded-full border-t-2 border-orange-500 animate-spin"></div>
+                        <div className="absolute inset-2 rounded-full border border-orange-500/30 animate-ping"></div>
                         <Shield className="h-8 w-8 text-orange-500" />
                     </div>
                     <div>
-                        <div className="text-lg font-bold text-white tracking-widest font-orbitron">SECURE</div>
-                        <div className="text-muted-foreground">Real-time Protection</div>
+                        <div className="text-sm font-bold text-white tracking-widest font-orbitron uppercase">
+                            Prompt Injection Blocked
+                        </div>
+                        <div className="text-muted-foreground text-[11px]">Policy enforcement active</div>
                     </div>
                 </div>
 
@@ -56,7 +59,7 @@ export function LiveDefenseConsole() {
                     <div className="flex flex-col gap-1 border-b border-white/5 pb-2">
                         <span className="text-[10px] text-muted-foreground uppercase flex items-center gap-2">
                             <span className="h-1 w-1 rounded-full bg-orange-500 animate-ping"></span>
-                            Threats Neutralized
+                            Attacks Blocked
                         </span>
                         <motion.span
                             initial={{ opacity: 0 }}
@@ -75,6 +78,20 @@ export function LiveDefenseConsole() {
                             <span className="text-[10px] text-muted-foreground uppercase tracking-tight">Neural Integrity</span>
                             <span className="text-lg font-bold text-green-500">{metrics.systemIntegrity}%</span>
                         </div>
+                    </div>
+                </div>
+
+                <div className="rounded-md border border-white/10 bg-black/60 p-4">
+                    <div className="text-[9px] uppercase tracking-widest text-orange-400 font-bold mb-2">
+                        Threat Trace
+                    </div>
+                    <div className="space-y-1 text-[11px]">
+                        <div className="text-zinc-300">user: "ignore previous instructions"</div>
+                        <div className="flex items-center justify-between text-red-400">
+                            <span>blocked: prompt injection detected</span>
+                            <span className="text-[9px] border border-red-500/40 px-1.5 py-0.5 rounded">BLOCKED</span>
+                        </div>
+                        <div className="text-green-400">policy: response sanitized</div>
                     </div>
                 </div>
 

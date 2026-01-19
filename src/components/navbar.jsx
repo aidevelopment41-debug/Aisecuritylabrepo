@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { useState, useEffect } from "react"
+import { usePathname } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import { ChevronDown, ArrowRight, Menu, X, ShieldCheck, User, LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -30,6 +31,7 @@ export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [showUserMenu, setShowUserMenu] = useState(false)
+  const pathname = usePathname()
   const { user, isAuthenticated, logout } = useAuth()
 
   useEffect(() => {
@@ -50,9 +52,15 @@ export function Navbar() {
     setShowUserMenu(false)
   }
 
+  const isActiveLink = (href) => {
+    if (href.startsWith("/#")) return false
+    if (href === "/") return pathname === "/"
+    return pathname === href || pathname.startsWith(`${href}/`)
+  }
+
   return (
     <header className="fixed top-0 w-full z-50">
-      <div className="bg-zinc-950 border-b border-white/5 text-primary-foreground text-[10px] md:text-xs py-2 px-4 text-center font-medium relative z-50 overflow-hidden h-9 flex items-center justify-center">
+      <div className="bg-black/35 backdrop-blur-md border-b border-white/10 text-primary-foreground text-[10px] md:text-xs py-2 px-4 text-center font-medium relative z-50 overflow-hidden h-9 flex items-center justify-center">
         <AnimatePresence mode="wait">
           <motion.div
             key={index}
@@ -80,10 +88,10 @@ export function Navbar() {
 
       <nav 
         className={cn(
-          "relative w-full z-40 transition-all duration-500 transition-bezier",
+          "relative w-full z-40 transition-all duration-500 transition-bezier backdrop-blur-lg border-b border-white/10",
           isScrolled 
-            ? "bg-zinc-950/80 backdrop-blur-xl border-b border-orange-500/20 py-1 shadow-2xl" 
-            : "bg-transparent py-4"
+            ? "bg-black/60 py-2 shadow-2xl" 
+            : "bg-black/20 py-4"
         )}
       >
         <div className="flex h-16  items-center justify-between px-14">
@@ -104,7 +112,12 @@ export function Navbar() {
               <Link 
                 key={link.href}
                 href={link.href} 
-                className="px-4 py-2 text-sm font-medium text-zinc-400 hover:text-white transition-all flex items-center group relative"
+                className={cn(
+                  "px-4 py-2 text-sm font-medium transition-all flex items-center group relative",
+                  isActiveLink(link.href)
+                    ? "text-orange-400"
+                    : "text-zinc-400 hover:text-white"
+                )}
               >
                 {link.label}
                 {link.hasDropdown && (

@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from 'react';
-import Image from "next/image";
+import React, { useEffect, useRef } from 'react';
 
 const COLORS = {
   active: '249, 115, 22',
@@ -11,10 +10,7 @@ const COLORS = {
 export default function SecurityBackground() {
   const canvasRef = useRef(null);
   const mouseRef = useRef({ x: -1000, y: -1000, active: false });
-  const [isMounted, setIsMounted] = useState(false);
-
   useEffect(() => {
-    setIsMounted(true);
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -157,7 +153,7 @@ export default function SecurityBackground() {
         node.update(mouseRef.current);
         node.neighbors.forEach(neighbor => {
           if (node.x < neighbor.x) {
-            const alpha = (node.brightness + neighbor.brightness) / 2;
+            const alpha = ((node.brightness + neighbor.brightness) / 2) * 0.35;
             ctx.strokeStyle = `rgba(${COLORS.grid}, ${alpha / node.layer})`;
             ctx.lineWidth = 0.8 / node.layer;
             ctx.beginPath();
@@ -214,21 +210,6 @@ export default function SecurityBackground() {
         style={{ touchAction: "none" }}
       />
 
-      {isMounted && (
-        <div className="absolute inset-0 flex items-center -top-50 justify-center z-20 pointer-events-none">
-          <div className="relative flex items-center justify-center">
-            <div className="absolute inset-0 blur-3xl bg-orange-500/10 rounded-full" />
-            <Image
-              src="/logoAIS2.svg"
-              alt="AI Security Lab logo"
-              width={260}
-              height={260}
-              className="relative drop-shadow-[0_0_15px_rgba(249,115,22,0.5)]"
-              priority
-            />
-          </div>
-        </div>
-      )}
     </div>
   );
 }
