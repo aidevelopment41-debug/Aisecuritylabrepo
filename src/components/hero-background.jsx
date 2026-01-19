@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from 'react';
-import AnimLogo from "@/components/animlogo";
+import Image from "next/image";
 
 const COLORS = {
   active: '249, 115, 22',
@@ -216,10 +216,16 @@ export default function SecurityBackground() {
 
       {isMounted && (
         <div className="absolute inset-0 flex items-center -top-50 justify-center z-20 pointer-events-none">
-          <div className="relative">
-            {/* Outer Glow for Logo */}
+          <div className="relative flex items-center justify-center">
             <div className="absolute inset-0 blur-3xl bg-orange-500/10 rounded-full" />
-            <AnimLogo size={340} className="text-orange-500 drop-shadow-[0_0_15px_rgba(249,115,22,0.5)]" />
+            <Image
+              src="/logoAIS2.svg"
+              alt="AI Security Lab logo"
+              width={260}
+              height={260}
+              className="relative drop-shadow-[0_0_15px_rgba(249,115,22,0.5)]"
+              priority
+            />
           </div>
         </div>
       )}

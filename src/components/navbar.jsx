@@ -5,27 +5,25 @@ import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { ChevronDown, ArrowRight, Menu, X, ShieldCheck, User, LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { NeonButton } from "@/components/neon-button"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/hooks/useAuth"
 
 const NAV_LINKS = [
-  { 
-    label: "Research & Projects", 
-    href: "/research",
-    hasDropdown: true,
-    badge: "New" 
-  },
-  { label: "Services & Solutions", href: "/services" },
-  { label: "Insights", href: "/insights" },
-  { label: "Resources", href: "/resources" },
-  { label: "About Us", href: "/about" },
+  { label: "Platform", href: "/platform" },
+  { label: "Solutions", href: "/services" },
+  { label: "Research", href: "/research", badge: "New" },
+  { label: "Company", href: "/company" },
+  { label: "Partners", href: "/#partners" },
 ]
 
 const ANNOUNCEMENTS = [
-  { text: "New Research: Prompt Injection in RAG Systems - 2026 Report", href: "/research/rag-security" },
-  { text: "Webinar: Securing Agentic Workflows - Register Now", href: "/webinar" },
-  { text: "Platform Update: Enhanced Context Filtering Live", href: "/updates" },
+  { text: "Intel Drop: RAG citation spoofing attacks - New brief", href: "/research" },
+  { text: "Lab Update: Fire drill templates now live", href: "/lab" },
+  { text: "Platform Update: Evidence packs for GRC", href: "/updates" },
 ]
+
+const PRIMARY_CTA = { label: "Try the Lab", href: "/lab" }
 
 export function Navbar() {
   const [index, setIndex] = useState(0)
@@ -172,16 +170,16 @@ export function Navbar() {
                   href="/login" 
                   className="text-xs font-semibold text-zinc-400 hover:text-white hidden sm:flex items-center gap-2 transition-colors"
                 >
-                  Login
-                </Link>
-                
-                <Link href="/signup">
-                  <Button size="sm" className="hidden sm:flex bg-orange-600 hover:bg-orange-500 text-white border-none shadow-lg shadow-orange-900/20">
-                   Sign Up
-                  </Button>
+                  Log in
                 </Link>
               </>
             )}
+
+            <Link href={PRIMARY_CTA.href} className="hidden sm:flex">
+              <NeonButton variant="orange" size="sm">
+                {PRIMARY_CTA.label}
+              </NeonButton>
+            </Link>
 
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -220,8 +218,18 @@ export function Navbar() {
                 ))}
                 
                 <div className="pt-8 border-t border-white/5 space-y-4">
-                  <Button variant="outline" className="w-full text-zinc-300 border-zinc-800">Client Portal</Button>
-                  <Button className="w-full bg-orange-600">Request Audit</Button>
+                  <Link href={PRIMARY_CTA.href} onClick={() => setIsMenuOpen(false)}>
+                    <NeonButton variant="orange" size="md" className="w-full">
+                      {PRIMARY_CTA.label}
+                    </NeonButton>
+                  </Link>
+                  {!isAuthenticated && (
+                    <Link href="/login" onClick={() => setIsMenuOpen(false)}>
+                      <Button variant="outline" className="w-full text-zinc-300 border-zinc-800">
+                        Log in
+                      </Button>
+                    </Link>
+                  )}
                 </div>
               </div>
             </motion.div>

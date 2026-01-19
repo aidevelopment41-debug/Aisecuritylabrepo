@@ -2,6 +2,7 @@ import Link from "next/link"
 import { ShieldAlert, Twitter, Linkedin, Github } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { NeonButton } from "@/components/neon-button"
 
 export function Footer() {
     return (
@@ -18,10 +19,10 @@ export function Footer() {
                             Join the leading organizations trusting us to defend their LLMs against adversarial attacks.
                         </p>
                         <div className="flex gap-4 pt-2">
-                            <Link href="/demo">
-                                <Button className="font-bold bg-orange-500 text-white hover:bg-orange-600 transition-all shadow-[0_0_20px_rgba(249,115,22,0.1)]">
-                                    Request Demo
-                                </Button>
+                            <Link href="/lab">
+                                <NeonButton variant="orange" size="md">
+                                    Try the Lab
+                                </NeonButton>
                             </Link>
                             <Link href="/platform">
                                 <Button variant="outline" className="border-white/20 text-white hover:border-orange-500/50 hover:bg-orange-500/10 transition-all">
@@ -74,33 +75,33 @@ export function Footer() {
                     <div className="space-y-4">
                         <h4 className="font-bold text-white">Platform</h4>
                         <ul className="space-y-2 text-muted-foreground text-sm">
-                            <li><Link href="#" className="hover:text-orange-500 transition-colors">Detection Engine</Link></li>
-                            <li><Link href="#" className="hover:text-orange-500 transition-colors">Compliance Control</Link></li>
-                            <li><Link href="#" className="hover:text-orange-500 transition-colors">Real-time WAF</Link></li>
-                            <li><Link href="#" className="hover:text-orange-500 transition-colors">Integrations</Link></li>
-                            <li><Link href="#" className="hover:text-orange-500 transition-colors">Docs</Link></li>
+                            <li><Link href="/platform" className="hover:text-orange-500 transition-colors">Overview</Link></li>
+                            <li><Link href="/services" className="hover:text-orange-500 transition-colors">Solutions</Link></li>
+                            <li><Link href="/lab" className="hover:text-orange-500 transition-colors">Try the Lab</Link></li>
+                            <li><Link href="/research" className="hover:text-orange-500 transition-colors">Research</Link></li>
+                            <li><Link href="/updates" className="hover:text-orange-500 transition-colors">Updates</Link></li>
                         </ul>
                     </div>
 
                     <div className="space-y-4">
                         <h4 className="font-bold text-white">Company</h4>
                         <ul className="space-y-2 text-muted-foreground text-sm">
-                            <li><Link href="#" className="hover:text-orange-500 transition-colors">About Us</Link></li>
-                            <li><Link href="#" className="hover:text-orange-500 transition-colors">Careers</Link></li>
-                            <li><Link href="#" className="hover:text-orange-500 transition-colors">Newsroom</Link></li>
-                            <li><Link href="#" className="hover:text-orange-500 transition-colors">Partners</Link></li>
-                            <li><Link href="#" className="hover:text-orange-500 transition-colors">Contact</Link></li>
+                            <li><Link href="/company" className="hover:text-orange-500 transition-colors">About Us</Link></li>
+                            <li><Link href="/company" className="hover:text-orange-500 transition-colors">Leadership</Link></li>
+                            <li><Link href="/#partners" className="hover:text-orange-500 transition-colors">Partners</Link></li>
+                            <li><Link href="/insights" className="hover:text-orange-500 transition-colors">Insights</Link></li>
+                            <li><Link href="/resources" className="hover:text-orange-500 transition-colors">Resources</Link></li>
                         </ul>
                     </div>
 
                     <div className="space-y-4">
                         <h4 className="font-bold text-white">Resources</h4>
                         <ul className="space-y-2 text-muted-foreground text-sm">
-                            <li><Link href="#" className="hover:text-orange-500 transition-colors">Blog</Link></li>
-                            <li><Link href="#" className="hover:text-orange-500 transition-colors">Research Reports</Link></li>
-                            <li><Link href="#" className="hover:text-orange-500 transition-colors">Webinars</Link></li>
-                            <li><Link href="#" className="hover:text-orange-500 transition-colors">Vulnerability Database</Link></li>
-                            <li><Link href="#" className="hover:text-orange-500 transition-colors">Community</Link></li>
+                            <li><Link href="/research" className="hover:text-orange-500 transition-colors">Threat Research</Link></li>
+                            <li><Link href="/insights" className="hover:text-orange-500 transition-colors">Analyst Briefs</Link></li>
+                            <li><Link href="/webinar" className="hover:text-orange-500 transition-colors">Webinars</Link></li>
+                            <li><Link href="/resources" className="hover:text-orange-500 transition-colors">Security Toolkit</Link></li>
+                            <li><Link href="/updates" className="hover:text-orange-500 transition-colors">Release Notes</Link></li>
                         </ul>
                     </div>
 
@@ -109,12 +110,12 @@ export function Footer() {
                 {/* Bottom Section: Legal */}
                 <div className="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-white/5 text-muted-foreground text-xs">
                     <div className="mb-4 md:mb-0">
-                        © 2026 AI Security Lab. All rights reserved.
+                        (c) 2026 AI Security Lab. All rights reserved.
                     </div>
                     <div className="flex gap-8">
-                        <Link href="#" className="hover:text-white">Privacy Policy</Link>
-                        <Link href="#" className="hover:text-white">Terms of Service</Link>
-                        <Link href="#" className="hover:text-white">Cookie Settings</Link>
+                        <Link href="/privacy" className="hover:text-white">Privacy Policy</Link>
+                        <Link href="/terms" className="hover:text-white">Terms of Service</Link>
+                        <Link href="/cookies" className="hover:text-white">Cookie Settings</Link>
                     </div>
                 </div>
 
