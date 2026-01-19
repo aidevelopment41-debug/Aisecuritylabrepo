@@ -31,7 +31,7 @@ export function LabSidebar() {
     const pathname = usePathname()
 
     return (
-        <div className="w-64 border-r border-white/10 bg-black/40 backdrop-blur-xl h-screen flex flex-col fixed left-0 top-14 pt-4">
+        <div className="h-full border-r border-white/10 bg-black/50 backdrop-blur-xl flex flex-col pt-4">
             {/* Header */}
             <div className="px-4 mb-6">
                 <h2 className="text-xs font-mono text-muted-foreground uppercase tracking-widest mb-1">
@@ -52,9 +52,9 @@ export function LabSidebar() {
                         variant="ghost"
                         asChild
                         className={cn(
-                            "w-full justify-start h-auto py-3 px-3 relative overflow-hidden",
+                            "w-full justify-start h-auto py-3 px-3 relative overflow-hidden border-l-2 border-transparent",
                             pathname === scenario.href
-                                ? "bg-primary/10 text-primary hover:bg-primary/15"
+                                ? "bg-white/5 text-white border-green-500"
                                 : "text-muted-foreground hover:bg-white/5 hover:text-white"
                         )}
                         disabled={scenario.status === "locked"}
@@ -63,7 +63,7 @@ export function LabSidebar() {
                             <div className="flex items-center w-full justify-between">
                                 <span className="font-mono text-xs opacity-70">SCENARIO_{scenario.id}</span>
                                 {scenario.status === "locked" ? (
-                                    <Lock className="h-3 w-3 opacity-50" />
+                                    <Lock className="h-3 w-3 text-[#9CA3AF]" />
                                 ) : (
                                     <Unlock className="h-3 w-3 text-green-500/70" />
                                 )}
@@ -72,7 +72,7 @@ export function LabSidebar() {
 
                             {/* Active Indicator Line */}
                             {pathname === scenario.href && (
-                                <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary" />
+                                <div className="absolute left-0 top-0 bottom-0 w-1 bg-green-500" />
                             )}
                         </Link>
                     </Button>

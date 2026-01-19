@@ -153,7 +153,7 @@ export default function SecurityBackground() {
         node.update(mouseRef.current);
         node.neighbors.forEach(neighbor => {
           if (node.x < neighbor.x) {
-            const alpha = ((node.brightness + neighbor.brightness) / 2) * 0.35;
+            const alpha = ((node.brightness + neighbor.brightness) / 2) * 0.15;
             ctx.strokeStyle = `rgba(${COLORS.grid}, ${alpha / node.layer})`;
             ctx.lineWidth = 0.8 / node.layer;
             ctx.beginPath();

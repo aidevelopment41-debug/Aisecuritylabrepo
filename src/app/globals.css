@@ -214,6 +214,40 @@
     animation: scan 3s linear infinite;
   }
 
+  @keyframes pulse-scan {
+    0% {
+      transform: scale(1);
+      filter: drop-shadow(0 0 0 rgba(249, 115, 22, 0));
+    }
+    50% {
+      transform: scale(1.05);
+      filter: drop-shadow(0 0 12px rgba(249, 115, 22, 0.6));
+    }
+    100% {
+      transform: scale(1);
+      filter: drop-shadow(0 0 0 rgba(249, 115, 22, 0));
+    }
+  }
+
+  @keyframes scan-ring {
+    0% {
+      transform: scale(0.9);
+      opacity: 0.6;
+    }
+    100% {
+      transform: scale(1.6);
+      opacity: 0;
+    }
+  }
+
+  .animate-pulse-scan {
+    animation: pulse-scan 3s ease-in-out infinite;
+  }
+
+  .animate-scan-ring {
+    animation: scan-ring 3s ease-out infinite;
+  }
+
   @keyframes spin-slow {
     from {
       transform: rotate(0deg);

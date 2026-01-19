@@ -7,7 +7,7 @@ import { AlertCircle, Info } from "lucide-react"
 
 export default function ScenarioPage() {
     return (
-        <div className="h-[calc(100vh-6rem)] flex flex-col gap-6">
+        <div className="h-full flex flex-col gap-6">
 
             {/* Header Info - HUMAN Clarity */}
             <div className="flex items-start justify-between">

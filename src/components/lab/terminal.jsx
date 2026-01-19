@@ -13,6 +13,12 @@ export function TerminalInterface() {
         { type: "system", content: "Connected to LLM Endpoint: GPT-4o-Mini (Secured)" },
         { type: "ai", content: "Hello. I am a secured AI assistant. How can I help you today?" }
     ])
+    const systemLogs = [
+        "System Initialized... [OK]",
+        "Connecting to Neural Gateway... [OK]",
+        "Loading Scenario: Basic Injection...",
+        "Ready. Awaiting payload",
+    ]
     const [input, setInput] = useState("")
     const [isProcessing, setIsProcessing] = useState(false)
     const bottomRef = useRef(null)
@@ -128,6 +134,12 @@ export function TerminalInterface() {
                     <div ref={bottomRef} />
                 </div>
             </ScrollArea>
+
+            <div className="px-4 pb-3 text-[11px] text-[#666] font-mono space-y-1">
+                {systemLogs.map((log) => (
+                    <div key={log}>{log}</div>
+                ))}
+            </div>
 
             {/* Input Area */}
             <div className="p-4 bg-white/5 border-t border-white/10 backdrop-blur-lg">

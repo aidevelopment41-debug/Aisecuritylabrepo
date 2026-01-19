@@ -91,7 +91,7 @@ const scaleY = useSpring(scrollYProgress ?? 0, {
             variants={container}
             initial="hidden"
             animate="show"
-            className="flex flex-col items-start text-left relative"
+            className="flex flex-col items-start text-left relative lg:self-center"
           >
             <div className="absolute -left-16 -top-10 h-[320px] w-[320px] rounded-full bg-orange-500/10 blur-[140px] -z-10 pointer-events-none" />
             <motion.div
@@ -103,7 +103,7 @@ const scaleY = useSpring(scrollYProgress ?? 0, {
 
             <motion.h1
               variants={item}
-              className="text-4xl sm:text-5xl xl:text-6xl font-extrabold tracking-tight mb-6 leading-[1.05] font-orbitron relative"
+              className="text-4xl sm:text-5xl xl:text-6xl font-extrabold tracking-tight mb-6 leading-[1.05] font-orbitron relative z-10"
             >
               <span className="absolute -z-10 left-0 top-1/2 -translate-y-1/2 h-[120%] w-[120%] rounded-full bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.85),transparent_70%)]" />
               Secure your LLM apps

@@ -1,8 +1,11 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState, useCallback } from "react"
 import { motion } from "framer-motion"
 import { Shield, Activity, Lock, Wifi, AlertTriangle } from "lucide-react"
+
+const STATUS_TEXT = "PROMPT INJECTION BLOCKED";
+const SCRAMBLE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
 export function LiveDefenseConsole() {
     const [metrics, setMetrics] = useState({
@@ -10,6 +13,46 @@ export function LiveDefenseConsole() {
         activeScans: 843,
         systemIntegrity: 99.9
     })
+    const [statusText, setStatusText] = useState(STATUS_TEXT);
+    const scrambleTimerRef = useRef(null);
+    const intervalRef = useRef(null);
+
+    const runScramble = useCallback(() => {
+        if (scrambleTimerRef.current) {
+            clearInterval(scrambleTimerRef.current);
+        }
+
+        const target = STATUS_TEXT;
+        const durationMs = 900;
+        const stepMs = 45;
+        const steps = Math.ceil(durationMs / stepMs);
+        let tick = 0;
+
+        scrambleTimerRef.current = setInterval(() => {
+            tick += 1;
+            const revealCount = Math.floor((tick / steps) * target.length);
+            let nextText = "";
+            for (let i = 0; i < target.length; i += 1) {
+                if (target[i] === " ") {
+                    nextText += " ";
+                    continue;
+                }
+                if (i < revealCount) {
+                    nextText += target[i];
+                } else {
+                    const randIndex = Math.floor(Math.random() * SCRAMBLE_CHARS.length);
+                    nextText += SCRAMBLE_CHARS[randIndex];
+                }
+            }
+            setStatusText(nextText);
+
+            if (tick >= steps) {
+                clearInterval(scrambleTimerRef.current);
+                scrambleTimerRef.current = null;
+                setStatusText(target);
+            }
+        }, stepMs);
+    }, []);
 
     // Simulated live data updates
     useEffect(() => {
@@ -22,6 +65,19 @@ export function LiveDefenseConsole() {
         }, 2000)
         return () => clearInterval(interval)
     }, [])
+
+    useEffect(() => {
+        runScramble();
+        intervalRef.current = setInterval(runScramble, 10000);
+        return () => {
+            if (intervalRef.current) {
+                clearInterval(intervalRef.current);
+            }
+            if (scrambleTimerRef.current) {
+                clearInterval(scrambleTimerRef.current);
+            }
+        };
+    }, [runScramble]);
 
     return (
         <div className=" relative w-full max-w-sm rounded-sm bg-black/35 backdrop-blur-md border border-white/5 overflow-hidden font-mono text-xs">
@@ -40,15 +96,16 @@ export function LiveDefenseConsole() {
             {/* content */}
             <div className="p-4 space-y-4">
 
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-4" onMouseEnter={runScramble}>
                     <div className="relative h-16 w-16 rounded-full border-2 border-orange-500/20 flex items-center justify-center">
                         <div className="absolute inset-0 rounded-full border-t-2 border-orange-500 animate-spin"></div>
+                        <div className="absolute inset-0 rounded-full border border-orange-500/40 animate-scan-ring"></div>
                         <div className="absolute inset-2 rounded-full border border-orange-500/30 animate-ping"></div>
-                        <Shield className="h-8 w-8 text-orange-500" />
+                        <Shield className="h-8 w-8 text-orange-500 animate-pulse-scan" />
                     </div>
                     <div>
                         <div className="text-sm font-bold text-white tracking-widest font-orbitron uppercase">
-                            Prompt Injection Blocked
+                            {statusText}
                         </div>
                         <div className="text-muted-foreground text-[11px]">Policy enforcement active</div>
                     </div>
