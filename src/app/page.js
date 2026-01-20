@@ -38,7 +38,6 @@ const heroChecks = [
   { icon: Lock, text: "Evidence packs for security and GRC approval." },
 ]
 
-const partnerLogos = ["AWS", "OpenAI", "Pinecone", "LangChain", "Azure"];
 const complianceBadges = ["SOC2", "ISO 27001", "HIPAA-ready"];
 
 export default function Home() {
@@ -187,24 +186,6 @@ const scaleY = useSpring(scrollYProgress ?? 0, {
               </div>
             </div>
           </motion.div>
-        </div>
-      </section>
-
-      <section id="partners" className="relative z-10 container px-4 md:px-8 mx-auto max-w-screen-2xl pb-12">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-t border-white/5 pt-8">
-          <div className="text-[11px] font-mono uppercase tracking-[0.3em] text-white/70">
-            Technology partners
-          </div>
-          <div className="flex flex-wrap gap-3">
-            {partnerLogos.map((logo) => (
-              <div
-                key={logo}
-                className="px-3 py-1 rounded-full border border-white/30 bg-white/[0.03] text-[10px] font-mono uppercase tracking-[0.3em] text-white/70"
-              >
-                {logo}
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 

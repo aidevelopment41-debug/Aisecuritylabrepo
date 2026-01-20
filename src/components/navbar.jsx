@@ -15,7 +15,7 @@ const NAV_LINKS = [
   { label: "Solutions", href: "/services" },
   { label: "Research", href: "/research", badge: "New" },
   { label: "Company", href: "/company" },
-  { label: "Partners", href: "/#partners" },
+  { label: "About", href: "/about" },
 ]
 
 const ANNOUNCEMENTS = [
