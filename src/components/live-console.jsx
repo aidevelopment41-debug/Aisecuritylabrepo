@@ -66,6 +66,8 @@ export function LiveDefenseConsole() {
     const trace = lastTrace || {};
     const traceLabel = trace.blocked ? "BLOCKED" : "ALLOWED";
     const traceColor = trace.blocked ? "text-red-400" : "text-green-400";
+    const traceInput = (trace.userInput || "no recent activity").replace(/\s+/g, " ").trim();
+    const traceDisplay = traceInput.length > 72 ? `${traceInput.slice(0, 72)}...` : traceInput;
 
     return (
         <div className=" relative w-full max-w-sm rounded-sm bg-black/35 backdrop-blur-md border border-white/5 overflow-hidden font-mono text-xs">
@@ -74,15 +76,17 @@ export function LiveDefenseConsole() {
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-2 bg-white/5 border-b border-white/10">
                 <div className="flex items-center gap-2">
-                <div className="w-1 h-1 bg-orange-500 animate-pulse" />
-                <div className="w-8 h-[1px] bg-orange-500/30" />                    <span className="text-orange-500 uppercase tracking-widest text-[9px] font-bold">System Active</span>
+                    <div className="w-1.5 h-1.5 bg-orange-400 rounded-full animate-pulse" />
+                    <span className="text-orange-300 uppercase tracking-[0.2em] text-[10px] font-semibold leading-none">
+                        System Active
+                    </span>
                 </div>
-             
-                <div className="text-[10px] text-muted-foreground">v2.4.0</div>
+
+                <div className="text-[10px] text-white/50">v2.4.0</div>
             </div>
 
             {/* content */}
-            <div className="p-4 space-y-4">
+            <div className="p-6 space-y-4">
 
                 <div className="flex items-center gap-4" onMouseEnter={() => runScramble(baseStatusText)}>
                     <div className="relative h-16 w-16 rounded-full border-2 border-orange-500/20 flex items-center justify-center">
@@ -95,14 +99,14 @@ export function LiveDefenseConsole() {
                         <div className="text-sm font-bold text-white tracking-widest font-orbitron uppercase">
                             {statusText}
                         </div>
-                        <div className="text-muted-foreground text-[11px]">Policy enforcement active</div>
+                        <div className="text-white/60 text-[11px] font-medium">Policy enforcement active</div>
                     </div>
                 </div>
 
                 {/* Metrics */}
-                <div className="space-y-4 pt-2">
-                    <div className="flex flex-col gap-1 border-b border-white/5 pb-2">
-                        <span className="text-[10px] text-muted-foreground uppercase flex items-center gap-2">
+                    <div className="space-y-4 pt-2">
+                        <div className="flex flex-col gap-1 border-b border-white/5 pb-2">
+                        <span className="text-[10px] text-muted-foreground uppercase flex items-center gap-2 tracking-[0.2em] leading-none">
                             <span className="h-1 w-1 rounded-full bg-orange-500 animate-ping"></span>
                             Attacks Blocked
                         </span>
@@ -117,26 +121,32 @@ export function LiveDefenseConsole() {
                     <div className="grid grid-cols-2 gap-4">
                         <div className="flex flex-col gap-1">
                             <span className="text-[10px] text-muted-foreground uppercase tracking-tight">Active Scans</span>
-                            <span className="text-lg font-bold text-white/90 group-hover:text-orange-400 transition-colors">{metrics.activeScans}</span>
+                            <span className="text-lg font-bold text-white/90 group-hover:text-orange-400 transition-colors duration-200 ease-[cubic-bezier(0.4,0,0.2,1)]">
+                                {metrics.activeScans}
+                            </span>
                         </div>
                         <div className="flex flex-col gap-1">
                             <span className="text-[10px] text-muted-foreground uppercase tracking-tight">Neural Integrity</span>
-                            <span className="text-lg font-bold text-green-500">{metrics.systemIntegrity}%</span>
+                            <span className="text-lg font-bold text-green-500 drop-shadow-[0_0_6px_rgba(34,197,94,0.55)] animate-[pulse_3s_ease-in-out_infinite]">
+                                {metrics.systemIntegrity}%
+                            </span>
                         </div>
                     </div>
                 </div>
 
-                    <div className="rounded-md border border-white/10 bg-black/60 p-4">
-                    <div className="text-[9px] uppercase tracking-widest text-orange-400 font-bold mb-2">
-                        Threat Trace
+                <div className="rounded-md border border-white/10 bg-black/60 p-4 font-mono">
+                    <div className="flex items-center justify-between text-[10px] uppercase tracking-widest text-orange-300 font-semibold mb-2">
+                        <span>Threat Trace</span>
+                        <span className={`text-[9px] border border-white/20 px-2 py-0.5 rounded ${traceColor}`}>
+                            {traceLabel}
+                        </span>
                     </div>
-                    <div className="space-y-1 text-[11px]">
-                        <div className="text-zinc-300">user: "{trace.userInput || "no recent activity"}"</div>
-                        <div className={`flex items-center justify-between ${traceColor}`}>
-                            <span>{trace.status || "waiting for telemetry"}</span>
-                            <span className="text-[9px] border border-white/20 px-1.5 py-0.5 rounded">{traceLabel}</span>
-                        </div>
-                        <div className="text-green-400">{trace.policy || "policy: response sanitized"}</div>
+                    <div className="text-[12px] text-white/80 leading-relaxed">
+                        user: "{traceDisplay}"
+                    </div>
+                    <div className="mt-2 text-[11px] text-white/60">
+                        {trace.status || "waiting for telemetry"}
+                        <span className="ml-1 inline-block h-3 w-[2px] bg-white/60 align-middle animate-[pulse_1.2s_ease-in-out_infinite]" />
                     </div>
                 </div>
 
@@ -146,7 +156,7 @@ export function LiveDefenseConsole() {
                     {[...Array(30)].map((_, i) => (
                         <motion.div
                             key={i}
-                            className="w-1 bg-orange-500/40 group-hover/viz:bg-orange-500/60 transition-colors"
+                            className="w-1 bg-orange-500/40 group-hover/viz:bg-orange-500/60 transition-colors duration-200 ease-[cubic-bezier(0.4,0,0.2,1)]"
                             animate={{ height: ["10%", "90%", "20%", "70%", "10%"] }}
                             transition={{
                                 repeat: Infinity,
@@ -159,7 +169,7 @@ export function LiveDefenseConsole() {
                 </div>
 
                 <div className="pt-4 mt-2 border-t border-white/5">
-                    <button className="w-full py-2 rounded-lg bg-orange-500/5 border border-orange-500/20 text-[10px] font-bold uppercase tracking-widest text-orange-400 hover:bg-orange-500/10 transition-all">
+                    <button className="w-full py-2 rounded-lg bg-orange-500/5 border border-orange-500/20 text-[10px] font-bold uppercase tracking-widest text-orange-400 hover:bg-orange-500/10 transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)]">
                         View Live Dashboard
                     </button>
                 </div>

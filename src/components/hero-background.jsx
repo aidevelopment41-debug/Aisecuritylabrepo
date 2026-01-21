@@ -200,7 +200,13 @@ export default function SecurityBackground() {
   }, []);
 
   return (
-   <div className="absolute w-full h-screen overflow-hidden bg-transparent">
+   <div
+      className="absolute inset-0 w-full h-full overflow-hidden bg-transparent"
+      style={{
+        WebkitMaskImage: "linear-gradient(to bottom, rgba(0,0,0,1) calc(100% - 200px), rgba(0,0,0,0) 100%)",
+        maskImage: "linear-gradient(to bottom, rgba(0,0,0,1) calc(100% - 200px), rgba(0,0,0,0) 100%)",
+      }}
+    >
       {/* Scanline Effect Overlay */}
       <div className="absolute inset-0 pointer-events-none z-10 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.02),rgba(0,255,0,0.01),rgba(0,0,255,0.02))] bg-[length:100%_4px,3px_100%]" />
       

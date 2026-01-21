@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import React, { useEffect, useRef, useState } from "react";
-import { ArrowRight, ShieldCheck, Activity, Lock } from "lucide-react"
+import { ArrowRight, ShieldCheck, Activity, Lock, Target, Timer, Layers } from "lucide-react"
 import { motion, useScroll, useSpring } from "framer-motion";
 import HeroBackground from "@/components/hero-background"
 import { LiveDefenseConsole } from "@/components/live-console"
@@ -27,15 +27,30 @@ const item = {
 }
 
 const heroStats = [
-  { label: "Attack scenarios", value: "120+" },
-  { label: "Median hardening", value: "36 hrs" },
-  { label: "Attack-class coverage", value: "98%" },
+  {
+    label: "Attack scenarios",
+    value: "120+",
+    note: "Coverage across prompt, RAG, and tool abuse",
+    icon: Target,
+  },
+  {
+    label: "Median hardening",
+    value: "36 hrs",
+    note: "From first drill to patched release",
+    icon: Timer,
+  },
+  {
+    label: "Attack-class coverage",
+    value: "98%",
+    note: "Mapped to the latest LLM threat taxonomy",
+    icon: Layers,
+  },
 ]
 
 const heroChecks = [
   { icon: ShieldCheck, text: "Prompt injection coverage across chat, RAG, and agents." },
   { icon: Activity, text: "Live telemetry for intent, leakage, and tool misuse." },
-  { icon: Lock, text: "Evidence packs for security and GRC approval." },
+  { icon: Lock, text: "Audit-ready reports in minutes for governance, risk, and compliance." },
 ]
 
 const complianceBadges = ["SOC2", "ISO 27001", "HIPAA-ready"];
@@ -68,7 +83,7 @@ const scaleY = useSpring(scrollYProgress ?? 0, {
   return (
     <div
       ref={containerRef}
-      className="flex flex-col min-h-screen bg-[#000000] text-white pt-[90px] md:pt-[110px] relative overflow-hidden"
+      className="flex flex-col min-h-screen bg-[#000000] text-white pt-[124px] md:pt-[124px] pb-24 relative overflow-hidden"
     >
       <div className="fixed left-6 top-1/2 -translate-y-1/2 h-64 w-[1px] bg-zinc-800 hidden lg:block">
         <motion.div 
@@ -85,7 +100,7 @@ const scaleY = useSpring(scrollYProgress ?? 0, {
 
       {/* Hero Section */}
       <section className="relative z-10 container px-4 md:px-8 mx-auto max-w-screen-2xl">
-        <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-10 lg:gap-16 items-center min-h-[70vh] lg:min-h-[60vh] py-16 md:py-20">
+        <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-10 lg:gap-16 items-center min-h-[70vh] lg:min-h-[60vh] py-16 md:py-20">
           <motion.div
             variants={container}
             initial="hidden"
@@ -102,61 +117,88 @@ const scaleY = useSpring(scrollYProgress ?? 0, {
 
             <motion.h1
               variants={item}
-              className="text-4xl sm:text-5xl xl:text-6xl font-extrabold tracking-tight mb-6 leading-[1.05] font-orbitron relative z-10"
+              className="text-4xl sm:text-5xl xl:text-6xl font-extrabold tracking-[-0.05em] mb-6 leading-[1.05] font-exo relative z-10"
             >
               <span className="absolute -z-10 left-0 top-1/2 -translate-y-1/2 h-[120%] w-[120%] rounded-full bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.85),transparent_70%)]" />
               Secure your LLM apps
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-orange-400 to-amber-500">
+              <span
+                className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-orange-400 to-amber-500 font-black"
+                style={{ textShadow: "0 0 20px rgba(255, 107, 0, 0.3)" }}
+              >
                 {" "}before they ship.
               </span>
             </motion.h1>
 
             <motion.p
               variants={item}
-              className="text-base md:text-lg text-[#E5E5E5] mb-8 max-w-2xl font-sans font-medium leading-[1.6]"
+              className="text-base md:text-lg text-white/80 mb-8 max-w-[65ch] font-sans font-semibold leading-relaxed"
             >
-              Automate prompt injection drills and harden agent permissions. Give GRC teams the
-              evidence they need to approve releases without slowing down your roadmap.
+              Reduce LLM vulnerability by 90% before deployment. Automate prompt injection
+              drills, harden agent permissions, and deliver audit-ready reports in minutes
+              for governance, risk, and compliance teams.
             </motion.p>
 
             <motion.div variants={item} className="flex flex-wrap gap-4">
               <Link href="/lab">
-                <NeonButton variant="orange" size="lg">
+                <NeonButton
+                  variant="orange"
+                  size="lg"
+                  whileHover={{ scale: 1.05 }}
+                  className="bg-[#FF6B00] text-black border-transparent shadow-[0_0_18px_rgba(255,107,0,0.35)] hover:brightness-110 hover:text-black hover:shadow-[0_0_22px_rgba(255,107,0,0.5)] transition-[filter,box-shadow,color,background,transform] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] font-sans font-semibold tracking-normal px-6 py-2.5 rounded-lg"
+                >
                   Try the Lab
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </NeonButton>
               </Link>
               <Link href="/platform">
-                <NeonButton variant="outline" size="lg" className="border-white/50 text-white">
+                <NeonButton
+                  variant="outline"
+                  size="lg"
+                  className="border-white/40 text-white/80 bg-transparent hover:text-white transition-colors duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] font-sans font-semibold tracking-normal px-6 py-2.5 rounded-lg"
+                >
                   See How It Works
                 </NeonButton>
               </Link>
             </motion.div>
 
-            <motion.div variants={item} className="mt-8 grid grid-cols-2 sm:grid-cols-3 gap-6">
-              {heroStats.map((stat) => (
-                <div
-                  key={stat.label}
-                  className="rounded-xl border border-white/10 bg-white/[0.02] p-4"
-                >
-                  <div className="text-2xl font-bold text-white font-orbitron">{stat.value}</div>
-                  <div className="text-[10px] text-muted-foreground uppercase tracking-[0.2em] font-mono mt-2">
-                    {stat.label}
+            <motion.div variants={item} className="mt-12 grid grid-cols-2 sm:grid-cols-3 gap-6 shadow-2xl">
+              {heroStats.map((stat) => {
+                const StatIcon = stat.icon
+                return (
+                  <div
+                    key={stat.label}
+                    className="rounded-xl bg-[#0D0D0D] border border-white/10 p-4"
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <div className="text-2xl font-bold text-white font-orbitron">{stat.value}</div>
+                        <div className="text-[11px] text-white/70 uppercase tracking-[0.2em] font-mono mt-2 font-semibold">
+                          {stat.label}
+                        </div>
+                      </div>
+                      <div className="flex h-8 w-8 items-center justify-center">
+                        <StatIcon className="h-5 w-5 text-orange-400/80" />
+                      </div>
+                    </div>
+                    <p className="mt-3 text-xs text-white/70 font-medium leading-relaxed">
+                      {stat.note}
+                    </p>
                   </div>
-                </div>
-              ))}
+                )
+              })}
             </motion.div>
 
             <motion.div variants={item} className="mt-8 w-full rounded-2xl border border-white/10 bg-white/[0.03] p-4">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {heroChecks.map((check) => (
-                  <div key={check.text} className="flex items-start gap-3 text-sm text-[#E5E5E5]">
+                  <div key={check.text} className="flex items-start gap-3 text-sm text-white/80 font-medium">
                     <check.icon className="h-4 w-4 text-orange-400 mt-1" />
                     <span>{check.text}</span>
                   </div>
                 ))}
               </div>
             </motion.div>
+
           </motion.div>
 
           <motion.div
@@ -165,23 +207,36 @@ const scaleY = useSpring(scrollYProgress ?? 0, {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="flex justify-center lg:justify-end"
           >
-            <div className="relative w-full max-w-md">
+            <div className="relative w-full max-w-sm opacity-90 lg:translate-x-4">
               <div className="absolute -inset-6 rounded-3xl bg-gradient-to-br from-orange-500/10 via-transparent to-blue-500/10 blur-2xl" />
               <div className="relative">
-                <LiveDefenseConsole />
-                <div className="mt-4 flex items-center justify-between text-[10px] font-mono text-muted-foreground">
-                  <span>Telemetry: Live</span>
-                  <span>Latency: 9ms</span>
+                <div className="sm:hidden rounded-2xl border border-white/10 bg-black/50 p-4">
+                  <div className="text-[10px] font-mono uppercase tracking-[0.3em] text-orange-300">
+                    System Active
+                  </div>
+                  <div className="mt-3 text-sm text-white/80 font-medium">
+                    Threat Trace: "ignore previous instructions"
+                  </div>
+                  <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-orange-500/30 bg-orange-500/10 px-3 py-1 text-[10px] font-mono uppercase tracking-[0.2em] text-orange-200">
+                    Prompt blocked
+                  </div>
                 </div>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {complianceBadges.map((badge) => (
-                    <span
-                      key={badge}
-                      className="px-2 py-1 rounded-full border border-white/10 bg-white/[0.02] text-[10px] font-mono uppercase tracking-[0.2em] text-white/60"
-                    >
-                      {badge}
-                    </span>
-                  ))}
+                <div className="hidden sm:block">
+                  <LiveDefenseConsole />
+                  <div className="mt-4 flex items-center justify-between text-[10px] font-mono text-muted-foreground">
+                    <span>Telemetry: Live</span>
+                    <span>Latency: 9ms</span>
+                  </div>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {complianceBadges.map((badge) => (
+                      <span
+                        key={badge}
+                        className="px-2 py-1 rounded-full border border-white/10 bg-white/[0.02] text-[10px] font-mono uppercase tracking-[0.2em] text-white/60"
+                      >
+                        {badge}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
@@ -272,7 +327,7 @@ const scaleY = useSpring(scrollYProgress ?? 0, {
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
               whileHover={{ y: -5 }}
-              className="group p-6 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-all hover:border-orange-500/20 flex flex-col"
+              className="group p-6 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] hover:border-orange-500/20 flex flex-col"
             >
               <div className="text-[10px] font-mono text-orange-500 mb-2 uppercase tracking-widest font-bold">{r.type}</div>
               <h4 className="font-bold text-white mb-6 leading-tight font-orbitron text-sm">{r.title}</h4>
@@ -285,7 +340,7 @@ const scaleY = useSpring(scrollYProgress ?? 0, {
       </section>
 
       {/* Spacer */}
-      <div className="h-20"></div>
+      <div className="h-20 mb-10"></div>
 
     </div>
   )

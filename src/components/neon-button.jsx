@@ -13,7 +13,7 @@ export function NeonButton({
     const variants = {
         blue: "border-blue-500/50 text-blue-400 hover:text-blue-200 hover:shadow-[0_0_20px_rgba(59,130,246,0.3)]",
         green: "border-green-500/50 text-green-400 hover:text-green-200 hover:shadow-[0_0_20px_rgba(34,197,94,0.3)]",
-        orange: "border-orange-500/50 text-orange-400 hover:text-orange-200 hover:shadow-[0_0_20px_rgba(249,115,22,0.3)]",
+        orange: "border-orange-500/50 text-orange-400 hover:text-orange-200 hover:shadow-[0_0_20px_rgba(255,107,0,0.5)]",
         outline: "border-white/10 text-white hover:border-white/20 hover:bg-white/5",
     }
 
@@ -28,7 +28,7 @@ export function NeonButton({
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.98 }}
             className={cn(
-                "relative group overflow-hidden rounded-lg border bg-black/40 backdrop-blur-sm transition-all duration-300 font-mono tracking-wider font-bold",
+                "relative group overflow-hidden rounded-lg border bg-black/40 backdrop-blur-sm transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] font-mono tracking-wider font-semibold",
                 variants[variant],
                 sizes[size],
                 className
