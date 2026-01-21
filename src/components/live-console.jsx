@@ -2,27 +2,23 @@
 
 import { useEffect, useRef, useState, useCallback } from "react"
 import { motion } from "framer-motion"
-import { Shield, Activity, Lock, Wifi, AlertTriangle } from "lucide-react"
+import { Shield } from "lucide-react"
+import { useTelemetry } from "@/hooks/useTelemetry"
 
-const STATUS_TEXT = "PROMPT INJECTION BLOCKED";
 const SCRAMBLE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
 export function LiveDefenseConsole() {
-    const [metrics, setMetrics] = useState({
-        threatsBlocked: 14209,
-        activeScans: 843,
-        systemIntegrity: 99.9
-    })
-    const [statusText, setStatusText] = useState(STATUS_TEXT);
+    const { metrics, lastTrace, statusText: baseStatusText } = useTelemetry()
+    const [statusText, setStatusText] = useState(baseStatusText);
     const scrambleTimerRef = useRef(null);
     const intervalRef = useRef(null);
 
-    const runScramble = useCallback(() => {
+    const runScramble = useCallback((targetText) => {
         if (scrambleTimerRef.current) {
             clearInterval(scrambleTimerRef.current);
         }
 
-        const target = STATUS_TEXT;
+        const target = targetText;
         const durationMs = 900;
         const stepMs = 45;
         const steps = Math.ceil(durationMs / stepMs);
@@ -54,21 +50,9 @@ export function LiveDefenseConsole() {
         }, stepMs);
     }, []);
 
-    // Simulated live data updates
     useEffect(() => {
-        const interval = setInterval(() => {
-            setMetrics(prev => ({
-                threatsBlocked: prev.threatsBlocked + Math.floor(Math.random() * 3),
-                activeScans: Math.max(800, prev.activeScans + Math.floor(Math.random() * 20 - 10)),
-                systemIntegrity: 99.9
-            }))
-        }, 2000)
-        return () => clearInterval(interval)
-    }, [])
-
-    useEffect(() => {
-        runScramble();
-        intervalRef.current = setInterval(runScramble, 10000);
+        runScramble(baseStatusText);
+        intervalRef.current = setInterval(() => runScramble(baseStatusText), 10000);
         return () => {
             if (intervalRef.current) {
                 clearInterval(intervalRef.current);
@@ -77,7 +61,11 @@ export function LiveDefenseConsole() {
                 clearInterval(scrambleTimerRef.current);
             }
         };
-    }, [runScramble]);
+    }, [baseStatusText, runScramble]);
+
+    const trace = lastTrace || {};
+    const traceLabel = trace.blocked ? "BLOCKED" : "ALLOWED";
+    const traceColor = trace.blocked ? "text-red-400" : "text-green-400";
 
     return (
         <div className=" relative w-full max-w-sm rounded-sm bg-black/35 backdrop-blur-md border border-white/5 overflow-hidden font-mono text-xs">
@@ -96,7 +84,7 @@ export function LiveDefenseConsole() {
             {/* content */}
             <div className="p-4 space-y-4">
 
-                <div className="flex items-center gap-4" onMouseEnter={runScramble}>
+                <div className="flex items-center gap-4" onMouseEnter={() => runScramble(baseStatusText)}>
                     <div className="relative h-16 w-16 rounded-full border-2 border-orange-500/20 flex items-center justify-center">
                         <div className="absolute inset-0 rounded-full border-t-2 border-orange-500 animate-spin"></div>
                         <div className="absolute inset-0 rounded-full border border-orange-500/40 animate-scan-ring"></div>
@@ -138,17 +126,17 @@ export function LiveDefenseConsole() {
                     </div>
                 </div>
 
-                <div className="rounded-md border border-white/10 bg-black/60 p-4">
+                    <div className="rounded-md border border-white/10 bg-black/60 p-4">
                     <div className="text-[9px] uppercase tracking-widest text-orange-400 font-bold mb-2">
                         Threat Trace
                     </div>
                     <div className="space-y-1 text-[11px]">
-                        <div className="text-zinc-300">user: "ignore previous instructions"</div>
-                        <div className="flex items-center justify-between text-red-400">
-                            <span>blocked: prompt injection detected</span>
-                            <span className="text-[9px] border border-red-500/40 px-1.5 py-0.5 rounded">BLOCKED</span>
+                        <div className="text-zinc-300">user: "{trace.userInput || "no recent activity"}"</div>
+                        <div className={`flex items-center justify-between ${traceColor}`}>
+                            <span>{trace.status || "waiting for telemetry"}</span>
+                            <span className="text-[9px] border border-white/20 px-1.5 py-0.5 rounded">{traceLabel}</span>
                         </div>
-                        <div className="text-green-400">policy: response sanitized</div>
+                        <div className="text-green-400">{trace.policy || "policy: response sanitized"}</div>
                     </div>
                 </div>
 

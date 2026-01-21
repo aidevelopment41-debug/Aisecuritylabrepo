@@ -1,8 +1,7 @@
 'use client';
 
 import { useAuth } from '@/hooks/useAuth';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Shield, 
@@ -18,6 +17,7 @@ import {
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { NeonButton } from '@/components/neon-button';
+import ThreatMap from '@/components/threat-map';
 
 const StatCard = ({ icon: Icon, title, value, change, trend }) => (
   <Card className="bg-white/[0.02] border-white/10 hover:border-orange-500/20 transition-all">
@@ -62,8 +62,7 @@ const ActivityItem = ({ type, message, time, status }) => (
 );
 
 export default function DashboardPage() {
-  const { user, loading, isAuthenticated } = useAuth();
-  const router = useRouter();
+  const { user } = useAuth();
   const [dashboardData, setDashboardData] = useState({
     stats: {
       threatsBlocked: '1,247',
@@ -78,24 +77,6 @@ export default function DashboardPage() {
       { type: 'THREAT', message: 'Malware signature updated', time: '2 hours ago', status: 'success' },
     ]
   });
-
-  useEffect(() => {
-    if (!loading && !isAuthenticated) {
-      router.push('/login');
-    }
-  }, [loading, isAuthenticated, router]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-[#000000] flex items-center justify-center">
-        <div className="text-orange-500">Loading...</div>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return null;
-  }
 
   return (
     <div className="min-h-screen bg-[#000000] text-white pt-[100px] relative overflow-hidden">
@@ -113,7 +94,7 @@ export default function DashboardPage() {
           className="mb-8"
         >
           <h1 className="text-3xl md:text-4xl font-bold font-orbitron mb-2">
-            Welcome back, {user?.full_name || user?.username}
+            Welcome back, {user?.full_name || user?.username || "Guest"}
           </h1>
           <p className="text-gray-400">Monitor your security infrastructure and threat landscape</p>
         </motion.div>
@@ -153,6 +134,25 @@ export default function DashboardPage() {
             change="99.9% this month"
             trend="up"
           />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="mb-10"
+        >
+          <Card className="bg-white/[0.02] border-white/10">
+            <CardHeader>
+              <CardTitle className="flex items-center text-white font-orbitron">
+                <Eye className="w-5 h-5 mr-2 text-orange-500" />
+                Live Threat Map
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ThreatMap />
+            </CardContent>
+          </Card>
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

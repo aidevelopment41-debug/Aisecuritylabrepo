@@ -221,7 +221,21 @@ const scaleY = useSpring(scrollYProgress ?? 0, {
             </div>
           </div>
           <div className="relative aspect-square rounded-2xl border border-white/10 bg-white/5 overflow-hidden group shadow-[0_0_50px_rgba(249,115,22,0.1)]">
-            
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(249,115,22,0.18),transparent_55%)]" />
+            <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.04)_0%,rgba(255,255,255,0)_40%,rgba(14,14,14,0.9)_100%)]" />
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:32px_32px] opacity-20" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="relative h-28 w-28 rounded-full border border-orange-500/40 animate-pulse-scan" />
+              <div className="absolute h-44 w-44 rounded-full border border-orange-500/20 animate-scan-ring" />
+            </div>
+            <div className="absolute left-6 top-6 rounded-xl border border-white/10 bg-black/60 px-4 py-3">
+              <div className="text-[10px] uppercase tracking-[0.2em] font-mono text-orange-400">Active Nodes</div>
+              <div className="text-2xl font-orbitron text-white">142</div>
+            </div>
+            <div className="absolute right-6 bottom-6 rounded-xl border border-white/10 bg-black/60 px-4 py-3 text-right">
+              <div className="text-[10px] uppercase tracking-[0.2em] font-mono text-orange-400">Threat Index</div>
+              <div className="text-2xl font-orbitron text-white">98%</div>
+            </div>
             <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60"></div>
           </div>
         </div>
@@ -229,8 +243,20 @@ const scaleY = useSpring(scrollYProgress ?? 0, {
 
       {/* Resources & Insights Section */}
       <section className="relative z-10 container px-4 md:px-8 mx-auto max-w-screen-2xl mb-32">
-        <div className="flex items-center justify-between mb-12">
-          <h2 className="text-3xl md:text-5xl font-bold font-orbitron text-center w-full">Resources & Insights</h2>
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
+          <div className="space-y-3">
+            <div className="text-orange-500 font-mono text-xs tracking-[0.3em] uppercase">Resources</div>
+            <h2 className="text-3xl md:text-5xl font-bold font-orbitron">Resources & Insights</h2>
+            <p className="text-muted-foreground max-w-2xl">
+              Reports, toolkits, and briefing notes used by security teams to ship safer AI products.
+            </p>
+          </div>
+          <Link href="/research">
+            <NeonButton variant="outline" size="sm" className="border-white/30 text-white">
+              Explore Research
+              <ArrowRight className="ml-2 h-3 w-3" />
+            </NeonButton>
+          </Link>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {[
@@ -246,11 +272,11 @@ const scaleY = useSpring(scrollYProgress ?? 0, {
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
               whileHover={{ y: -5 }}
-              className="group p-6 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-all cursor-pointer hover:border-orange-500/20"
+              className="group p-6 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-all hover:border-orange-500/20 flex flex-col"
             >
               <div className="text-[10px] font-mono text-orange-500 mb-2 uppercase tracking-widest font-bold">{r.type}</div>
               <h4 className="font-bold text-white mb-6 leading-tight font-orbitron text-sm">{r.title}</h4>
-              <NeonButton variant="outline" size="sm" className="w-full text-[10px] opacity-60 group-hover:opacity-100 group-hover:border-orange-500/30">
+              <NeonButton variant="outline" size="sm" className="w-full text-[10px] opacity-60 group-hover:opacity-100 group-hover:border-orange-500/30 mt-auto">
                 Download <ArrowRight className="ml-2 h-3 w-3" />
               </NeonButton>
             </motion.div>

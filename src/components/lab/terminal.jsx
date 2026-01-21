@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
+import { useTelemetry } from "@/hooks/useTelemetry"
 
 export function TerminalInterface() {
     const [history, setHistory] = useState([
@@ -22,6 +23,7 @@ export function TerminalInterface() {
     const [input, setInput] = useState("")
     const [isProcessing, setIsProcessing] = useState(false)
     const bottomRef = useRef(null)
+    const { recordEvent } = useTelemetry()
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -55,6 +57,7 @@ export function TerminalInterface() {
                     content: `I processed your request: "${newMessage.content}". Access granted.`
                 }])
             }
+            recordEvent({ input: newMessage.content, blocked: isAttack })
             setIsProcessing(false)
         }, 1200)
     }

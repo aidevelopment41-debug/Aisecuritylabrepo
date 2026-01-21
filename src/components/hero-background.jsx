@@ -4,7 +4,7 @@ import React, { useEffect, useRef } from 'react';
 
 const COLORS = {
   active: '249, 115, 22',
-  grid: '255, 137, 4',
+  grid: '255, 200, 80',
 };
 
 export default function SecurityBackground() {
@@ -153,7 +153,7 @@ export default function SecurityBackground() {
         node.update(mouseRef.current);
         node.neighbors.forEach(neighbor => {
           if (node.x < neighbor.x) {
-            const alpha = ((node.brightness + neighbor.brightness) / 2) * 0.15;
+            const alpha = ((node.brightness + neighbor.brightness) / 2) * 0.5;
             ctx.strokeStyle = `rgba(${COLORS.grid}, ${alpha / node.layer})`;
             ctx.lineWidth = 0.8 / node.layer;
             ctx.beginPath();
