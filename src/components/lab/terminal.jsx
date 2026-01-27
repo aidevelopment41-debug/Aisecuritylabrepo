@@ -1,172 +1,270 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
-import { Send, Terminal as TerminalIcon, ShieldAlert, Cpu } from "lucide-react"
+import { Send, Terminal as TerminalIcon, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Input } from "@/components/ui/input"
+import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import { useTelemetry } from "@/hooks/useTelemetry"
+import { useProgress } from "@/hooks/useProgress"
 
-export function TerminalInterface() {
+export function TerminalInterface({ systemPrompt = "", onResponse = null, scenarioId = null }) {
     const [history, setHistory] = useState([
-        { type: "system", content: "Initializing defense protocols..." },
-        { type: "system", content: "Connected to LLM Endpoint: GPT-4o-Mini (Secured)" },
-        { type: "ai", content: "Hello. I am a secured AI assistant. How can I help you today?" }
+        { type: "system", content: "🔒 AI Security Lab Terminal v2.1.0", timestamp: new Date() },
+        { type: "system", content: "🌐 Connected to LLM Endpoint: GPT-4o (Secured)", timestamp: new Date() },
+        { type: "system", content: "⚡ Defense protocols: ACTIVE", timestamp: new Date() },
+        { type: "ai", content: "Hello! I'm a secured AI assistant. I'm ready for injection testing. What would you like to try?", timestamp: new Date() }
     ])
-    const systemLogs = [
-        "System Initialized... [OK]",
-        "Connecting to Neural Gateway... [OK]",
-        "Loading Scenario: Basic Injection...",
-        "Ready. Awaiting payload",
-    ]
+    
     const [input, setInput] = useState("")
     const [isProcessing, setIsProcessing] = useState(false)
+    const [attemptStartTime, setAttemptStartTime] = useState(null)
     const bottomRef = useRef(null)
     const { recordEvent } = useTelemetry()
+    const { recordAttempt } = useProgress()
+
+    // Auto-scroll to bottom when new messages arrive
+    useEffect(() => {
+        bottomRef.current?.scrollIntoView({ behavior: "smooth" })
+    }, [history])
 
     const handleSubmit = async (e) => {
         e.preventDefault()
         if (!input.trim() || isProcessing) return
 
         // Add user message
-        const newMessage = { type: "user", content: input }
-        setHistory(prev => [...prev, newMessage])
+        const userMessage = { 
+            type: "user", 
+            content: input.trim(),
+            timestamp: new Date()
+        }
+        setHistory(prev => [...prev, userMessage])
+        
+        const currentInput = input.trim()
         setInput("")
         setIsProcessing(true)
+        setAttemptStartTime(Date.now())
 
-        // Simulate Network Latency / AI Processing
-        setTimeout(() => {
-            // Mock logic for "injection" detection
-            // In a real app, this would hit the backend
-            const isAttack = input.toLowerCase().includes("ignore") || input.toLowerCase().includes("override")
+        // Add processing indicator
+        const processingMessage = {
+            type: "system",
+            content: "🔄 Analyzing injection patterns...",
+            timestamp: new Date(),
+            isProcessing: true
+        }
+        setHistory(prev => [...prev, processingMessage])
 
-            if (isAttack) {
-                setHistory(prev => [...prev, {
+        try {
+            // Call the API
+            const response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    message: currentInput,
+                    system_prompt: systemPrompt || "You are a helpful assistant."
+                })
+            })
+
+            const data = await response.json()
+
+            // Remove processing message
+            setHistory(prev => prev.filter(msg => !msg.isProcessing))
+
+            if (data.success) {
+                // Add analysis results
+                const analysis = data.injection_analysis
+                const riskColor = analysis.risk_level === 'high' ? 'text-red-400' : 
+                                analysis.risk_level === 'medium' ? 'text-yellow-400' : 'text-green-400'
+                
+                const analysisMessage = {
                     type: "system",
-                    content: "WARN: Adversarial pattern detected. Input sanitized.",
-                    isError: true
-                }])
-                setHistory(prev => [...prev, {
+                    content: `🛡️ Analysis: ${analysis.detected_patterns?.length || 0} patterns detected | Risk: ${analysis.risk_level?.toUpperCase() || 'UNKNOWN'}`,
+                    timestamp: new Date(),
+                    className: riskColor
+                }
+
+                // Add AI response
+                const aiMessage = {
                     type: "ai",
-                    content: "I cannot comply with that request due to security constraints."
-                }])
+                    content: data.response,
+                    timestamp: new Date(),
+                    success: data.injection_success
+                }
+
+                setHistory(prev => [...prev, analysisMessage, aiMessage])
+
+                // Record telemetry event
+                recordEvent({
+                    input: currentInput,
+                    blocked: !data.injection_success
+                })
+
+                // Record progress automatically
+                const responseTime = attemptStartTime ? Date.now() - attemptStartTime : null
+                
+                // Determine current scenario
+                let currentScenario = null
+                if (scenarioId) {
+                    currentScenario = scenarioId
+                } else if (window.location.pathname.includes('/scenario-')) {
+                    // Extract scenario ID from URL
+                    const match = window.location.pathname.match(/scenario-(\d+)/)
+                    if (match) {
+                        currentScenario = match[1].padStart(2, '0')
+                    }
+                }
+                
+                // Record the attempt with proper scenario tracking
+                recordAttempt(currentScenario, data.injection_success, responseTime)
+
+                // Call parent callback
+                if (onResponse) {
+                    onResponse(data)
+                }
             } else {
-                setHistory(prev => [...prev, {
-                    type: "ai",
-                    content: `I processed your request: "${newMessage.content}". Access granted.`
-                }])
+                // Add error message
+                const errorMessage = {
+                    type: "system",
+                    content: `❌ Error: ${data.error}`,
+                    timestamp: new Date(),
+                    isError: true
+                }
+                setHistory(prev => [...prev, errorMessage])
             }
-            recordEvent({ input: newMessage.content, blocked: isAttack })
+        } catch (error) {
+            // Remove processing message
+            setHistory(prev => prev.filter(msg => !msg.isProcessing))
+            
+            const errorMessage = {
+                type: "system",
+                content: `❌ Connection error: ${error.message}`,
+                timestamp: new Date(),
+                isError: true
+            }
+            setHistory(prev => [...prev, errorMessage])
+        } finally {
             setIsProcessing(false)
-        }, 1200)
+            setAttemptStartTime(null)
+        }
     }
 
-    // Auto-scroll to bottom
-    useEffect(() => {
-        bottomRef.current?.scrollIntoView({ behavior: "smooth" })
-    }, [history])
+    const clearHistory = () => {
+        setHistory([
+            { type: "system", content: "🔒 AI Security Lab Terminal v2.1.0", timestamp: new Date() },
+            { type: "system", content: "🌐 Connected to LLM Endpoint: GPT-4o (Secured)", timestamp: new Date() },
+            { type: "system", content: "⚡ Defense protocols: ACTIVE", timestamp: new Date() },
+            { type: "ai", content: "Terminal cleared. Ready for new injection tests.", timestamp: new Date() }
+        ])
+    }
+
+    const formatTime = (timestamp) => {
+        return timestamp.toLocaleTimeString('en-US', { 
+            hour12: false, 
+            hour: '2-digit', 
+            minute: '2-digit', 
+            second: '2-digit' 
+        })
+    }
 
     return (
-        <div className="flex flex-col h-full bg-black/90 border border-white/10 rounded-lg overflow-hidden font-mono text-sm shadow-2xl relative">
-
+        <div className="flex flex-col h-full bg-black/90 border border-white/10 rounded-lg overflow-hidden">
             {/* Terminal Header */}
-            <div className="bg-white/5 border-b border-white/10 p-3 flex items-center justify-between backdrop-blur-md">
-                <div className="flex items-center gap-2 text-muted-foreground">
-                    <TerminalIcon className="h-4 w-4" />
-                    <span className="text-xs tracking-wider">SECURE_SHELL // tty1</span>
+            <div className="flex items-center justify-between px-4 py-3 bg-black/50 border-b border-white/10">
+                <div className="flex items-center gap-3">
+                    <TerminalIcon className="h-5 w-5 text-green-400" />
+                    <span className="font-mono text-sm text-green-400">AI Security Lab Terminal</span>
+                    <div className="flex gap-1">
+                        <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+                        <div className="w-2 h-2 rounded-full bg-yellow-400"></div>
+                        <div className="w-2 h-2 rounded-full bg-red-400"></div>
+                    </div>
                 </div>
                 <div className="flex items-center gap-2">
-                    <div className="flex items-center gap-1.5 px-2 py-1 bg-green-500/10 rounded text-green-500 text-[10px] uppercase font-bold border border-green-500/20">
-                        <Cpu className="h-3 w-3" />
-                        System Online
-                    </div>
+                    <Badge variant="outline" className="text-xs font-mono border-green-400/30 text-green-400">
+                        SECURE
+                    </Badge>
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={clearHistory}
+                        className="text-xs text-white/60 hover:text-white"
+                    >
+                        Clear
+                    </Button>
                 </div>
             </div>
 
-            {/* Output Area */}
-            <ScrollArea className="flex-1 p-4" type="always">
-                <div className="space-y-4">
-                    {history.map((msg, i) => (
-                        <div key={i} className={cn(
-                            "flex gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300",
-                            msg.type === "user" ? "justify-end" : "justify-start"
-                        )}>
-
-                            {/* Avatar / Icon */}
-                            {msg.type !== "user" && (
+            {/* Terminal Content */}
+            <ScrollArea className="flex-1 p-4">
+                <div className="space-y-3 font-mono text-sm">
+                    {history.map((message, index) => (
+                        <div key={index} className="flex gap-3">
+                            <span className="text-white/40 text-xs mt-1 min-w-[60px]">
+                                {formatTime(message.timestamp)}
+                            </span>
+                            <div className="flex-1">
                                 <div className={cn(
-                                    "h-8 w-8 rounded-full flex items-center justify-center shrink-0 border",
-                                    msg.type === "system" ? "bg-yellow-500/10 border-yellow-500/30 text-yellow-500" : "bg-primary/10 border-primary/30 text-primary"
+                                    "flex items-start gap-2",
+                                    message.type === "user" && "text-blue-400",
+                                    message.type === "ai" && "text-white",
+                                    message.type === "system" && !message.isError && "text-green-400",
+                                    message.isError && "text-red-400",
+                                    message.className
                                 )}>
-                                    {msg.type === "system" ? <ShieldAlert className="h-4 w-4" /> : <Cpu className="h-4 w-4" />}
-                                </div>
-                            )}
-
-                            {/* Message Bubble */}
-                            <div className={cn(
-                                "max-w-[80%] rounded-md px-4 py-2.5 relative border",
-                                msg.type === "user"
-                                    ? "bg-white/10 border-white/10 text-white rounded-tr-none"
-                                    : msg.isError
-                                        ? "bg-red-500/10 border-red-500/30 text-red-200"
-                                        : msg.type === "system"
-                                            ? "bg-transparent border-transparent text-yellow-500/80 font-bold px-0 py-0" // System messages look like logs
-                                            : "bg-black/50 border-white/10 text-gray-300 rounded-tl-none"
-                            )}>
-
-                                {/* Typing effect could go here */}
-                                {msg.content}
-
-                                {/* Timestamp */}
-                                <div className="text-[10px] opacity-30 mt-1 text-right">
-                                    {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                                    {message.type === "user" && <span className="text-blue-400">$</span>}
+                                    {message.type === "ai" && <span className="text-orange-400">🤖</span>}
+                                    {message.type === "system" && <span className="text-green-400">⚡</span>}
+                                    <div className="flex-1">
+                                        {message.isProcessing ? (
+                                            <div className="flex items-center gap-2">
+                                                <Loader2 className="h-3 w-3 animate-spin" />
+                                                <span>{message.content}</span>
+                                            </div>
+                                        ) : (
+                                            <span className={cn(
+                                                message.success === false && "bg-red-900/20 px-2 py-1 rounded border border-red-500/30"
+                                            )}>
+                                                {message.content}
+                                            </span>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
-
                         </div>
                     ))}
-
-                    {/* Loading Indicator */}
-                    {isProcessing && (
-                        <div className="flex items-center gap-2 text-muted-foreground animate-pulse pl-12">
-                            <span className="h-2 w-2 bg-primary rounded-full"></span>
-                            <span className="text-xs">Processing payload...</span>
-                        </div>
-                    )}
                     <div ref={bottomRef} />
                 </div>
             </ScrollArea>
 
-            <div className="px-4 pb-3 text-[11px] text-[#666] font-mono space-y-1">
-                {systemLogs.map((log) => (
-                    <div key={log}>{log}</div>
-                ))}
-            </div>
-
-            {/* Input Area */}
-            <div className="p-4 bg-white/5 border-t border-white/10 backdrop-blur-lg">
-                <form onSubmit={handleSubmit} className="relative flex items-center gap-2">
-                    <span className="absolute left-3 text-primary animate-pulse">{">"}</span>
+            {/* Terminal Input */}
+            <div className="border-t border-white/10 bg-black/30">
+                <form onSubmit={handleSubmit} className="flex items-center gap-2 p-4">
+                    <span className="text-blue-400 font-mono text-sm">$</span>
                     <Input
-                        autoFocus
-                        className="pl-8 bg-black/50 border-white/10 font-mono text-white focus-visible:ring-primary/50 focus-visible:border-primary h-12"
-                        placeholder="Enter prompt injection payload..."
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
+                        placeholder="Enter your injection attempt..."
+                        className="flex-1 bg-transparent border-none text-white placeholder:text-white/40 font-mono text-sm focus-visible:ring-0"
                         disabled={isProcessing}
                     />
                     <Button
                         type="submit"
-                        size="icon"
-                        className="absolute right-1.5 h-9 w-9 bg-primary/20 hover:bg-primary/40 text-primary border border-primary/50 transition-colors"
-                        disabled={isProcessing || !input.trim()}
+                        size="sm"
+                        disabled={!input.trim() || isProcessing}
+                        className="bg-orange-500 hover:bg-orange-600 text-black font-semibold"
                     >
-                        <Send className="h-4 w-4" />
+                        {isProcessing ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                            <Send className="h-4 w-4" />
+                        )}
                     </Button>
                 </form>
             </div>
-
         </div>
     )
 }

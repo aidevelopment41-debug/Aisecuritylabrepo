@@ -15,8 +15,15 @@ export const AuthProvider = ({ children }) => {
       try {
         const token = authService.getStoredToken();
         if (token) {
-          const userData = await authService.getCurrentUser();
-          setUser(userData);
+          try {
+            const userData = await authService.getCurrentUser();
+            setUser(userData);
+          } catch (authError) {
+            // Token might be invalid, clear it
+            console.warn('Token validation failed, clearing stored token');
+            authService.logout();
+            setError('Session expired. Please log in again.');
+          }
         }
       } catch (err) {
         console.error('Auth initialization failed:', err);

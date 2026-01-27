@@ -40,7 +40,7 @@ export function TelemetryProvider({ children }) {
     setStatusText(blocked ? "PROMPT INJECTION BLOCKED" : "SYSTEM ACTIVE");
   }, []);
 
-  const telemetryUrl = process.env.NEXT_PUBLIC_TELEMETRY_URL;
+  const telemetryUrl = '/api/telemetry'; // Use our Next.js API route
 
   useEffect(() => {
     if (!telemetryUrl) return;
